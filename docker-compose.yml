@@ -1,0 +1,105 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres-retail-demo
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=retail_demo
+      - POSTGRES_PASSWORD=${POSTGRES_ROOT_PASSWORD}
+      - RETAIL_READONLY_PASSWORD=${RETAIL_READONLY_PASSWORD}
+      - RETAIL_APP_PASSWORD=${RETAIL_APP_PASSWORD}
+      # Ajuste de memoria para una instancia pequena (1GB) - los valores
+      # por defecto de la imagen asumen bastante mas RAM disponible.
+      - POSTGRES_INITDB_ARGS=--data-checksums
+    command: >
+      postgres -c shared_buffers=64MB
+               -c max_connections=20
+               -c effective_cache_size=200MB
+    volumes:
+      - ../postgres-retail-admin/schema:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
+    # NO se publica ningun puerto hacia fuera (nada de "ports:") -
+    # solo es accesible DESDE OTROS CONTENEDORES de esta misma red,
+    # nunca desde internet.
+    networks:
+      - backend-net
+    mem_limit: 300m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  nagios:
+    image: jasonrivers/nagios:latest
+    container_name: nagios-lab
+    restart: unless-stopped
+    volumes:
+      - ../nagios-monitoring-lab/config:/opt/nagios/etc/conf.d
+      - ../nagios-monitoring-lab/resource.cfg:/opt/nagios/etc/resource.cfg
+      - ../nagios-monitoring-lab/config-overrides/localhost_disabled.cfg:/opt/nagios/etc/objects/localhost.cfg:ro
+      # Volumen de datos propio de Nagios: sin esto, el historial de
+      # estados, los reconocimientos de incidencias y los logs se
+      # pierden cada vez que se recrea el contenedor - con este
+      # volumen, sobreviven a un "docker compose down" normal (sin -v).
+      - nagios-data:/opt/nagios/var
+    environment:
+      # Credenciales del panel web - NUNCA se dejan las de por defecto
+      # de la imagen (nagiosadmin/nagios). Se leen del .env.
+      - NAGIOSADMIN_USER=${NAGIOS_ADMIN_USER}
+      - NAGIOSADMIN_PASS=${NAGIOS_ADMIN_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend-net
+    mem_limit: 200m
+    # Nagios ya NO se expone al exterior en absoluto - se queda como
+    # proyecto interno de practica, documentado en GitHub con
+    # capturas de pantalla, no accesible en vivo desde internet.
+
+  portfolio-web:
+    image: nginx:alpine
+    container_name: portfolio-web
+    restart: unless-stopped
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+    networks:
+      - edge-net
+    mem_limit: 50m
+    # Tampoco publica puerto hacia el host - solo el tunel de
+    # Cloudflare (mas abajo) llega hasta aqui, nunca directo.
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: portfolio-tunnel
+    restart: unless-stopped
+    # El token del tunel se guarda en un .env (no versionado).
+    # En el panel de Cloudflare Zero Trust, la ruta publica del tunel
+    # apunta a http://portfolio-web:80 - LO UNICO visible desde tu
+    # dominio. Nagios y Postgres no son alcanzables desde el tunel.
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - portfolio-web
+    networks:
+      - edge-net
+    mem_limit: 80m
+
+networks:
+  edge-net:
+    driver: bridge
+    # cloudflared + portfolio-web - lo unico que necesita alcanzarse
+    # entre si. Deliberadamente separada de backend-net: si alguna
+    # vez cloudflared se viera comprometido, NO existe ninguna ruta
+    # de red hacia postgres/nagios desde aqui.
+  backend-net:
+    driver: bridge
+    # postgres + nagios - nagios necesita alcanzar a postgres para su
+    # check, pero ninguno de los dos tiene motivo para ver cloudflared
+    # ni portfolio-web.
+
+volumes:
+  postgres-data:
+  nagios-data:

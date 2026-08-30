@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sergio Seoane — Homelab &amp; Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="prompt">sergio@homelab:~$ <span class="accent">whoami</span></div>
+    <h1>Sergio Seoane Martínez</h1>
+    <p class="role">Técnico de Sistemas (LPIC-1, CCST Networking) en ruta hacia AWS Cloud. Estos son mis proyectos personales de sistemas, redes y automatización.</p>
+    <div class="links">
+      <a href="https://github.com/sergioseoane" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:sergioseoane005@gmail.com">Email</a>
+    </div>
+  </header>
+
+  <p class="section-label">Sistemas &amp; Bases de datos</p>
+  <div class="grid">
+    <div class="card">
+      <div class="card-head"><span class="led"></span><h3>postgres-retail-admin</h3></div>
+      <p>Administración real de PostgreSQL sobre un caso retail: roles con privilegio mínimo, backups con verificación de integridad, e índices medidos con EXPLAIN ANALYZE (0.48ms → 0.17ms).</p>
+      <div class="tags"><span class="tag">PostgreSQL</span><span class="tag">Bash</span><span class="tag">SQL</span></div>
+      <div class="card-actions">
+        <button class="summary-btn" onclick="openModal('postgres-retail-admin')">ver resumen</button>
+        <a class="repo" href="https://github.com/sergiosoeane/postgres-retail-admin" target="_blank" rel="noopener">ver repositorio →</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="led"></span><h3>nagios-monitoring-lab</h3></div>
+      <p>Monitorización con Nagios Core vigilando disco, carga y la conexión a la base de datos del proyecto anterior.</p>
+      <div class="tags"><span class="tag">Nagios</span><span class="tag">Linux</span></div>
+      <div class="card-actions">
+        <button class="summary-btn" onclick="openModal('nagios-monitoring-lab')">ver resumen</button>
+        <a class="repo" href="https://github.com/sergioseoane/nagios-monitoring-lab" target="_blank" rel="noopener">ver repositorio →</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label">Redes &amp; Automatización</p>
+  <div class="grid">
+    <div class="card">
+      <div class="card-head"><span class="led"></span><h3>netscan</h3></div>
+      <p>Escáner de red en Python, con interfaz gráfica y scripts de auditoría rutinaria: detecta IPs libres/ocupadas, puertos abiertos, fabricantes por MAC y CVEs reales, sin depender de herramientas externas.</p>
+      <div class="tags"><span class="tag">Python</span><span class="tag">Tkinter</span><span class="tag">Redes</span></div>
+      <div class="card-actions">
+        <button class="summary-btn" onclick="openModal('netscan')">ver resumen</button>
+        <a class="repo" href="https://github.com/sergioseoane/netscan" target="_blank" rel="noopener">ver repositorio →</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label">Infraestructura &amp; Despliegue</p>
+  <div class="grid">
+    <div class="card">
+      <div class="card-head"><span class="led"></span><h3>portfolio-infra</h3></div>
+      <p>Esta misma web: orquesta Postgres, Nagios y la landing en una única instancia AWS de 1GB, con solo esta página expuesta a internet a través de un túnel de Cloudflare — el resto, deliberadamente invisible.</p>
+      <div class="tags"><span class="tag">Docker Compose</span><span class="tag">AWS</span><span class="tag">Cloudflare Tunnel</span></div>
+      <div class="card-actions">
+        <button class="summary-btn" onclick="openModal('portfolio-infra')">ver resumen</button>
+        <a class="repo" href="https://github.com/sergioseoane/portfolio-infra" target="_blank" rel="noopener">ver repositorio →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    portfolio.sergioseoane.com · servido desde AWS · túnel via Cloudflare · <span id="clock"></span>
+  </footer>
+
+</div>
+
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this) closeModal()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">✕</button>
+    <h2 id="modal-title"></h2>
+    <div class="modal-tags" id="modal-tags"></div>
+    <p class="modal-desc" id="modal-desc"></p>
+    <h3>Aprendizajes / fallos reales encontrados</h3>
+    <ul id="modal-learnings"></ul>
+    <a class="modal-repo-link" id="modal-repo-link" href="#" target="_blank" rel="noopener">Ver código en GitHub →</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
