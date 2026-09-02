@@ -1,0 +1,21 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Actualizar infraestructura, respetando servicios parados
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/portfolio/portfolio-infra
+            git pull origin main
+            RUNNING=$(docker compose ps --services --filter "status=running")
+            docker compose up -d $RUNNING
