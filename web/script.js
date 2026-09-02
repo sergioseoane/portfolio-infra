@@ -2,41 +2,52 @@ var projects = {
   'postgres-retail-admin': {
     name: 'postgres-retail-admin',
     tags: ['PostgreSQL', 'Bash', 'SQL'],
-    desc: 'Simula la base de datos de un negocio retail (tiendas, productos, inventario, ventas de TPV, empleados, turnos de caja) para practicar tareas reales de administración de PostgreSQL sobre un caso con sentido de negocio, no ejercicios de SQL sueltos.',
+    desc: 'Administración de PostgreSQL sobre un esquema realista de retail/TPV (tiendas, inventario, empleados, turnos de caja y ventas), aplicando prácticas de administración de bases de datos de producción.',
     learnings: [
-      'Roles con privilegio mínimo: retail_readonly (solo lectura) y retail_app (lectura/escritura, sin poder borrar tablas) — ninguno con permisos de superusuario.',
-      'Índice compuesto medido con EXPLAIN ANALYZE sobre 5.000 filas reales: 0.479ms sin índice → 0.175ms con índice (2.7x más rápido).',
-      'Trigger que mantiene el inventario actualizado solo a partir de un historial de movimientos (kardex), con un turno de caja real cuadrado y otro con descuadre (-2,50€), calculados a partir de ventas generadas paso a paso.'
+      'Diseño de esquemas relacionales: modelado de un dominio de negocio real con integridad referencial completa.',
+      'Control de acceso (RBAC): roles diferenciados de solo lectura y aplicación, bajo el principio de mínimo privilegio.',
+      'Automatización a nivel de base de datos: triggers y funciones en PL/pgSQL para mantener la integridad de datos.',
+      'Gestión de backups con verificación activa de integridad, no solo generación.',
+      'Optimización basada en evidencia: decisiones de indexación respaldadas por EXPLAIN ANALYZE.'
     ],
     repo: 'https://github.com/sergioseoane/postgres-retail-admin'
   },
   'nagios-monitoring-lab': {
     name: 'nagios-monitoring-lab',
     tags: ['Nagios', 'Linux', 'Docker'],
-    desc: 'Monitorización con Nagios Core de un servidor Linux y, de forma explícita, de la base de datos del proyecto postgres-retail-admin — conectando ambos proyectos entre sí en vez de dejarlos sueltos. Incluye tiendas TPV simuladas y automatización de incidencias (Acknowledge, Scheduled Downtime) vía comandos externos.',
+    desc: 'Monitorización con Nagios Core de un servidor Linux y de la base de datos del proyecto postgres-retail-admin, con automatización de la gestión de incidencias mediante el motor de comandos externos.',
     learnings: [
-      'Prueba de carga real con pgbench: la alerta de CPU se disparó sola, sin forzar nada a mano, confirmando el ciclo completo de detección.'
+      'Administración de sistemas y contenedores: orquestación con Docker Compose y segmentación de red interna.',
+      'Configuración completa de Nagios Core: hosts, servicios, comandos, plantillas y contactos.',
+      'Monitorización de bases de datos con mínimo privilegio, mediante un rol de solo lectura dedicado.',
+      'Gestión de secretos fuera del código, mediante variables de entorno y archivos de macros no versionados.',
+      'Automatización de operaciones (ITOps/NOC): reconocimiento de incidencias y ventanas de mantenimiento programadas.'
     ],
     repo: 'https://github.com/sergioseoane/nagios-monitoring-lab'
   },
   'netscan': {
     name: 'netscan',
     tags: ['Python', 'Tkinter', 'Redes'],
-    desc: 'Escáner de red propio en Python, con interfaz de comandos e interfaz gráfica con pestañas, más una carpeta de scripts de auditoría rutinaria (certificados SSL, comparador de línea base, versiones por banner con CVEs reales, e informe semanal en HTML).',
+    desc: 'Herramienta de escaneo y auditoría de red en Python, con interfaz de línea de comandos e interfaz gráfica, orientada a tareas reales de administración de red: descubrimiento de hosts, diagnóstico y auditoría recurrente.',
     learnings: [
-      'Barrido de host y puertos en paralelo con ThreadPoolExecutor — de varios minutos a segundos para una subred /24 completa.',
-      'Wake-on-LAN verificado byte a byte: el paquete mágico generado coincide exactamente con el formato oficial (6 bytes 0xFF + la MAC repetida 16 veces).'
+      'Programación de red a bajo nivel: escaneo de hosts y puertos mediante sockets TCP paralelizados.',
+      'Identificación de dispositivos: resolución de fabricante por MAC y detección de direcciones aleatorias/privadas.',
+      'Diagnóstico de red: estimación de sistema operativo por TTL y diagnóstico de conectividad en cascada.',
+      'Integración con APIs externas: consulta de vulnerabilidades reales (CVE) contra la API del NVD (NIST).',
+      'Automatización operativa: certificados TLS, comparación de inventario de red y tareas programadas de Windows.'
     ],
     repo: 'https://github.com/sergioseoane/netscan'
   },
   'portfolio-infra': {
     name: 'portfolio-infra',
     tags: ['Docker Compose', 'AWS', 'Cloudflare Tunnel'],
-    desc: 'La infraestructura que sirve esta misma página: una única instancia AWS de la capa gratuita (1GB RAM) con Postgres, Nagios y esta landing, donde únicamente la landing es alcanzable desde internet, a través de un túnel de Cloudflare.',
+    desc: 'Infraestructura que sirve esta misma página: una única instancia AWS de 1GB de RAM, donde únicamente la landing es alcanzable desde internet, a través de un túnel de Cloudflare.',
     learnings: [
-      'El túnel de Cloudflare es una conexión de salida, no de entrada: la instancia "llama" a Cloudflare y no al revés, así que no hace falta abrir ningún puerto de entrada salvo SSH.',
-      'Separación en dos redes internas de Docker (edge-net / backend-net): si el contenedor del túnel se viera comprometido, no existe ninguna ruta de red hacia Postgres o Nagios — no por firewall, sino porque no hay ningún camino entre las dos redes.',
-      'Presupuesto de memoria calculado y ajustado para caber en 1GB (Postgres con shared_buffers=64MB, límites de memoria explícitos por contenedor).'
+      'Seguridad perimetral sin exposición interna: un único servicio público mediante un túnel de conexión saliente.',
+      'Segmentación de red a nivel de contenedor: redes Docker independientes que limitan el impacto de un compromiso.',
+      'Gestión de secretos: credenciales y tokens fuera del código, mediante variables de entorno no versionadas.',
+      'Gestión de recursos en entornos restringidos: presupuesto de memoria calculado por servicio para 1GB de RAM.',
+      'Orquestación con Docker Compose: arranque basado en comprobaciones de salud, no en tiempos de espera arbitrarios.'
     ],
     repo: 'https://github.com/sergioseoane/portfolio-infra'
   }

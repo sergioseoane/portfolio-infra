@@ -1,55 +1,95 @@
 # portfolio-infra
 
-Orquesta en una sola instancia AWS (capa gratuita, 1GB RAM) los
-proyectos de sistemas del portfolio, y expone **únicamente una
-landing page propia** a través de un túnel de Cloudflare — nada más.
+Infraestructura de despliegue que orquesta el conjunto del portfolio
+técnico en una única instancia cloud (capa gratuita, 1GB de RAM),
+aplicando principios reales de seguridad perimetral, segmentación de
+red y gestión de secretos — no solo "hacer que funcione", sino
+hacerlo con una superficie de exposición mínima deliberada.
 
-## Qué hay detrás, y qué es público
+## Objetivo del proyecto
 
-| Servicio | Accesible desde internet | Por qué |
-|---|---|---|
-| `portfolio-web` (Nginx + landing) | ✅ Sí, vía túnel | Es la única pieza pensada para que la vea un visitante |
-| `postgres` | ❌ No | No tiene interfaz visual, y una base de datos nunca debe exponerse directamente |
-| `nagios` | ❌ No | Queda como proyecto de práctica interno; se documenta en su repo con capturas, no en vivo |
+Diseñar el despliegue de varios servicios internos (base de datos,
+monitorización) junto a un único punto de acceso público, de forma
+que un fallo o compromiso del componente expuesto **no** suponga una
+vía de acceso al resto de la infraestructura.
 
-## Cómo levantarlo
+## Arquitectura y decisión de seguridad central
+
+```
+                    Internet
+                       │
+                       ▼
+              Túnel de Cloudflare
+           (conexión saliente, no entrante)
+                       │
+                       ▼
+        ┌──────────────────────────┐
+        │        edge-net           │
+        │  cloudflared + landing     │
+        └──────────────────────────┘
+                       │
+              (sin ruta de red)
+                       │
+        ┌──────────────────────────┐
+        │       backend-net          │
+        │   PostgreSQL + Nagios       │
+        └──────────────────────────┘
+```
+
+La instancia no publica ningún puerto de entrada salvo SSH — el
+tráfico público llega mediante un túnel que la propia instancia
+inicia hacia Cloudflare, nunca al revés. Los servicios internos
+(base de datos, monitorización) están además en una **red Docker
+distinta** a la del componente público: si el contenedor expuesto se
+viera comprometido, no existe ninguna ruta de red hacia el resto,
+no por regla de firewall, sino por ausencia estructural de conexión
+entre ambas redes.
+
+## Competencias técnicas aplicadas
+
+- **Seguridad perimetral sin exposición interna**: un único servicio
+  público mediante un túnel de conexión saliente, sin puertos de
+  entrada.
+- **Segmentación de red a nivel de contenedor**: redes Docker
+  independientes que limitan el radio de impacto de un componente
+  comprometido.
+- **Gestión de secretos**: credenciales y tokens fuera del código,
+  mediante variables de entorno no versionadas.
+- **Gestión de recursos en entornos restringidos**: presupuesto de
+  memoria por servicio (`mem_limit`) para operar de forma estable en
+  una instancia de 1GB de RAM.
+- **Orquestación con Docker Compose**: arranque basado en
+  comprobaciones de salud (`healthcheck`), no en tiempos de espera
+  arbitrarios.
+
+## Estructura del repositorio
+
+```
+docker-compose.yml   → definición completa de la infraestructura
+.env.example          → plantilla de variables de entorno (sin datos reales)
+web/
+  index.html
+  style.css
+  script.js
+```
+
+## Cómo ejecutarlo
 
 ```bash
 cp .env.example .env
-# Genera el tunel en el panel de Cloudflare Zero Trust (Access > Tunnels)
-# y pega el token en .env
+# Completar variables: credenciales de base de datos, panel de
+# monitorización y token del túnel de Cloudflare
 
 docker compose up -d
 ```
 
-En el panel de Cloudflare, configura la ruta pública del túnel:
-- **Subdominio**: `portfolio`
-- **Dominio**: `sergioseoane.com`
-- **Servicio**: `http://portfolio-web:80`
+Requiere que [`postgres-retail-admin`](../postgres-retail-admin) y
+[`nagios-monitoring-lab`](../nagios-monitoring-lab) estén clonados
+como carpetas hermanas de este repositorio, ya que sus archivos de
+configuración se montan directamente en los contenedores
+correspondientes.
 
-Quedará accesible en **https://portfolio.sergioseoane.com** — el
-dominio raíz (`sergioseoane.com`) se deja libre.
+## Proyectos relacionados
 
-## Memoria estimada (instancia de 1GB)
-
-| Servicio | RAM aprox. |
-|---|---|
-| PostgreSQL (ajustado) | 150-200MB |
-| Nagios | 80-120MB |
-| Nginx (landing) | 10-20MB |
-| Cloudflared | 40-60MB |
-| Sistema operativo | 150-200MB |
-| **Total** | **~450-600MB**, con margen dentro de 1GB |
-
-Recomendado además: crear un archivo de swap de 2GB en la instancia
-como red de seguridad ante picos puntuales.
-
-### Configuración de la Swap de Seguridad (2GB)
-Si estás en una instancia Linux de 1GB, ejecuta estos comandos para crear el espacio de intercambio:
-```bash
-sudo dd if=/dev/zero of=/swapfile bs=1M count=2048
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-```
+- [`postgres-retail-admin`](../postgres-retail-admin)
+- [`nagios-monitoring-lab`](../nagios-monitoring-lab)
