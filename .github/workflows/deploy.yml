@@ -4,18 +4,32 @@ on:
   push:
     branches: [main]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Actualizar infraestructura, respetando servicios parados
-        uses: appleboy/ssh-action@v1.0.0
+      - name: Configurar credenciales AWS (OIDC, sin claves guardadas)
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_AWS }}
-          script: |
-            cd ~/portfolio/portfolio-infra
-            git pull origin main
-            RUNNING=$(docker compose ps --services --filter "status=running")
-            docker compose up -d $RUNNING
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Desplegar via SSM
+        run: |
+          CMD_ID=$(aws ssm send-command \
+            --instance-ids "${{ secrets.EC2_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands='[
+              "cd /home/ubuntu/portfolio/portfolio-infra",
+              "git pull origin main",
+              "RUNNING=$(docker compose ps --services --filter status=running)",
+              "docker compose up -d $RUNNING"
+            ]' \
+            --query "Command.CommandId" --output text)
+
+          aws ssm wait command-executed --command-id "$CMD_ID" --instance-id "${{ secrets.EC2_INSTANCE_ID }}"
+          aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "${{ secrets.EC2_INSTANCE_ID }}"
