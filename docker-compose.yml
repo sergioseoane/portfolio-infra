@@ -64,6 +64,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./web:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - edge-net
     mem_limit: 50m
