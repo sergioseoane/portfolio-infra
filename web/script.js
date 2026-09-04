@@ -40,10 +40,13 @@ var projects = {
   },
   'portfolio-infra': {
     name: 'portfolio-infra',
-    tags: ['Docker Compose', 'AWS', 'Cloudflare Tunnel'],
-    desc: 'Infraestructura que sirve esta misma página: una única instancia AWS de 1GB de RAM, donde únicamente la landing es alcanzable desde internet, a través de un túnel de Cloudflare.',
+    tags: ['AWS IAM', 'OIDC', 'Systems Manager', 'Docker Compose'],
+    desc: 'Infraestructura en AWS que sirve esta misma página: una instancia EC2 sin un solo puerto de entrada, administrada y desplegada por completo a través de Systems Manager, con autenticación federada entre GitHub y AWS mediante OIDC.',
     learnings: [
-      'Seguridad perimetral sin exposición interna: un único servicio público mediante un túnel de conexión saliente.',
+      'IAM: roles separados por función (instancia EC2 / despliegue desde GitHub), cada uno con permisos mínimos y auditables.',
+      'OIDC entre GitHub y AWS: autenticación federada sin ninguna clave de AWS almacenada en GitHub — la política de confianza restringe qué repositorios y ramas pueden desplegar.',
+      'AWS Systems Manager: acceso administrativo y despliegue continuo sin abrir el puerto 22 en ningún momento.',
+      'EC2 y Security Groups: instancia con cero puertos de entrada publicados, incluyendo el diagnóstico de un fallo real causado por una región "opt-in" de AWS.',
       'Segmentación de red a nivel de contenedor: redes Docker independientes que limitan el impacto de un compromiso.',
       'Gestión de secretos: credenciales y tokens fuera del código, mediante variables de entorno no versionadas.',
       'Gestión de recursos en entornos restringidos: presupuesto de memoria calculado por servicio para 1GB de RAM.',
