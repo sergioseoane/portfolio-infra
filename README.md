@@ -1,7 +1,7 @@
 # portfolio-infra
 
 Infraestructura de despliegue en **AWS** para una parte de mi
-portfolio técnico — no es todo el portfolio, es la pieza que
+portfolio técnico — es la pieza que
 demuestra cómo diseño, aseguro y automatizo una infraestructura
 cloud real: aislamiento de red, despliegue continuo y cero acceso
 SSH.
@@ -13,7 +13,7 @@ SSH.
 Dos objetivos a la vez: que sirva como banco de pruebas real para
 aplicar y demostrar prácticas de infraestructura — redes, seguridad,
 CI/CD, IAM — sobre un caso concreto, y que a la vez sostenga una web
-pública de verdad, sin que esta última comprometa la seguridad de lo
+pública, sin que esta última comprometa la seguridad de lo
 primero.
 
 La base de datos y el panel de monitorización son de uso interno,
