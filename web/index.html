@@ -4,11 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sergio Seoane — Homelab &amp; Portfolio</title>
-<title>Sergio Seoane — Homelab &amp; Portfolio</title>
 <meta name="description" content="Portfolio técnico de Sergio Seoane: infraestructura AWS con IAM/OIDC/Systems Manager, Kubernetes y GitOps en Oracle Cloud, administración de PostgreSQL, monitorización con Nagios y automatización de redes en Python.">
 <link rel="canonical" href="https://portfolio.sergioseoane.com/">
 <meta name="robots" content="index, follow">
-
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sergio Seoane — Homelab & Portfolio">
 <meta property="og:description" content="Proyectos personales de infraestructura, sistemas y redes: AWS, Kubernetes, GitOps, PostgreSQL, monitorización y automatización.">
@@ -27,13 +25,90 @@
     <div class="links">
       <a href="https://github.com/sergioseoane" target="_blank" rel="noopener">GitHub</a>
       <a href="mailto:sergioseoane005@gmail.com">Email</a>
+      <button class="cv-toggle" id="cv-toggle" onclick="toggleCV()">Ver CV <span id="cv-arrow">▾</span></button>
     </div>
   </header>
 
+  <div class="cv-panel" id="cv-panel" hidden>
+    <div class="cv-panel-inner">
+      <div class="cv-top">
+        <div>
+          <p class="cv-role">Administrador de sistemas</p>
+          <p class="cv-about">Técnico de sistemas y redes, titulado en Grado Medio de Sistemas Microinformáticos y Redes, con certificaciones LPIC-1 y Cisco CCST Networking. Actualmente Responsable de Servicio Técnico, puesto al que fui promocionado a los seis meses. Mantengo mi propia infraestructura en AWS y Oracle Cloud con CI/CD, Terraform, Ansible y Kubernetes (k3s). Mi etapa previa liderando equipos de hasta 40 personas en hostelería de lujo me aporta gestión bajo presión y coordinación de equipos.</p>
+        </div>
+        <a class="cv-download" href="cv-sergio-seoane-martinez.pdf" download>Descargar PDF ↓</a>
+      </div>
+
+      <div class="cv-grid">
+        <div>
+          <p class="cv-h">Puesto actual</p>
+          <div class="cv-entry">
+            <p class="cv-entry-title">Responsable de Servicio Técnico</p>
+            <p class="cv-entry-meta">Solco Consultoría Informática · A Coruña · septiembre 2025 - actualidad</p>
+            <ul>
+              <li>Responsable del equipo de servicio técnico, soporte e instalaciones</li>
+              <li>Administración de Odoo como ERP interno (SAT, inventario, ventas, compras, proyectos) — certificación oficial en curso</li>
+              <li>Gestión y mantenimiento de la infraestructura de red de cliente (switches, routers, cableado y conectividad)</li>
+              <li>Soporte Help Desk N2/N3: incidencias de ERP, redes, hardware y TPV</li>
+            </ul>
+          </div>
+
+          <p class="cv-h">Experiencia previa</p>
+          <div class="cv-entry">
+            <p class="cv-entry-title">Jefe de cocina</p>
+            <p class="cv-entry-meta">Clap Restaurant · Dubai · jun. 2023 - nov. 2024</p>
+          </div>
+          <div class="cv-entry">
+            <p class="cv-entry-title">Jefe de cocina</p>
+            <p class="cv-entry-meta">Jumeirah Port de Soller 5* · Mallorca · oct. 2020 - abr. 2023</p>
+          </div>
+          <div class="cv-entry">
+            <p class="cv-entry-title">Jefe de cocina</p>
+            <p class="cv-entry-meta">Park Hotel 5* · Amsterdam · abr. 2016 - ene. 2018</p>
+            <ul>
+              <li>Coordinación de equipos de hasta 40 personas, gestión de presupuesto y control de gastos operativos</li>
+              <li>Formación, mentoring y evaluación de personal, fomentando la productividad</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <p class="cv-h">Educación</p>
+          <div class="cv-entry">
+            <p class="cv-entry-title">Grado Medio Sistemas Operativos y Redes</p>
+            <p class="cv-entry-meta">CFIP Rodolfo Ucha · Ferrol · 2023-2025</p>
+          </div>
+          <div class="cv-entry">
+            <p class="cv-entry-title">Certificación CCST Networking (Cisco Netacad)</p>
+            <p class="cv-entry-meta">Centro de Novas Tecnoloxías de Galicia · Santiago de Compostela · 2025</p>
+          </div>
+          <div class="cv-entry">
+            <p class="cv-entry-title">Certificación LPIC-1 (Linux Professional Institute)</p>
+            <p class="cv-entry-meta">Centro de Novas Tecnoloxías de Galicia · Santiago de Compostela · 2024</p>
+          </div>
+
+          <p class="cv-h">Habilidades técnicas</p>
+          <div class="cv-skills">
+            <span class="tag">Python</span><span class="tag">HTML/CSS</span><span class="tag">WordPress</span>
+            <span class="tag">SQL</span><span class="tag">Docker</span><span class="tag">VirtualBox</span>
+            <span class="tag">Git/GitHub</span><span class="tag">Scrum</span><span class="tag">Kanban</span>
+          </div>
+
+          <p class="cv-h">Otros datos</p>
+          <ul>
+            <li>Inglés nivel alto</li>
+            <li>Carnet de conducir y vehículo propio</li>
+            <li>Disponibilidad completa</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <p class="section-label">Infraestructura &amp; Despliegue</p>
   <div class="grid">
-    <div class="card">
-      <div class="card-head"><h3>oracle-devops-portfolio</h3></div>
+    <div class="card cat-infra">
+      <div class="card-head"><span class="status-dot"></span><h3>oracle-devops-portfolio</h3></div>
       <p>Clúster Kubernetes en Oracle Cloud Free Tier con flujo GitOps completo y autoalojado: Terraform, Ansible, Gitea + Gitea Actions, ArgoCD y observabilidad con Prometheus/Grafana.</p>
       <div class="tags"><span class="tag">Kubernetes</span><span class="tag">Terraform</span><span class="tag">GitOps</span><span class="tag">Ansible</span></div>
       <div class="card-actions">
@@ -41,8 +116,8 @@
         <a class="repo" href="https://github.com/sergioseoane/oracle-devops-portfolio" target="_blank" rel="noopener">ver repositorio →</a>
       </div>
     </div>
-    <div class="card">
-      <div class="card-head"><h3>portfolio-infra</h3></div>
+    <div class="card cat-infra">
+      <div class="card-head"><span class="status-dot"></span><h3>portfolio-infra</h3></div>
       <p>Infraestructura en AWS con despliegue continuo sin un solo puerto de entrada: IAM con permisos mínimos, autenticación federada OIDC entre GitHub y AWS, y ejecución remota vía Systems Manager.</p>
       <div class="tags"><span class="tag">AWS IAM</span><span class="tag">OIDC</span><span class="tag">Systems Manager</span><span class="tag">Docker Compose</span></div>
       <div class="card-actions">
@@ -54,8 +129,8 @@
 
   <p class="section-label">Sistemas &amp; Bases de datos</p>
   <div class="grid">
-    <div class="card">
-      <div class="card-head"><h3>postgres-retail-admin</h3></div>
+    <div class="card cat-sistemas">
+      <div class="card-head"><span class="status-dot"></span><h3>postgres-retail-admin</h3></div>
       <p>Administración de PostgreSQL sobre un esquema realista de retail/TPV: control de acceso por roles, backups verificados, y optimización basada en medición real.</p>
       <div class="tags"><span class="tag">PostgreSQL</span><span class="tag">Bash</span><span class="tag">SQL</span></div>
       <div class="card-actions">
@@ -63,8 +138,8 @@
         <a class="repo" href="https://github.com/sergioseoane/postgres-retail-admin" target="_blank" rel="noopener">ver repositorio →</a>
       </div>
     </div>
-    <div class="card">
-      <div class="card-head"><h3>nagios-monitoring-lab</h3></div>
+    <div class="card cat-sistemas">
+      <div class="card-head"><span class="status-dot"></span><h3>nagios-monitoring-lab</h3></div>
       <p>Monitorización con Nagios Core de un servidor y de la base de datos del proyecto anterior, con automatización de incidencias vía comandos externos.</p>
       <div class="tags"><span class="tag">Nagios</span><span class="tag">Linux</span></div>
       <div class="card-actions">
@@ -76,8 +151,8 @@
 
   <p class="section-label">Redes &amp; Automatización</p>
   <div class="grid">
-    <div class="card">
-      <div class="card-head"><h3>netscan</h3></div>
+    <div class="card cat-redes">
+      <div class="card-head"><span class="status-dot"></span><h3>netscan</h3></div>
       <p>Escáner de red en Python, con interfaz gráfica y scripts de auditoría rutinaria: identificación de dispositivos, diagnóstico de conectividad y CVEs reales.</p>
       <div class="tags"><span class="tag">Python</span><span class="tag">Tkinter</span><span class="tag">Redes</span></div>
       <div class="card-actions">

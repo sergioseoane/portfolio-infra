@@ -9,7 +9,7 @@ var projects = {
       'GitOps real: Gitea Actions construye y publica imágenes, ArgoCD sincroniza el clúster automáticamente (prune y selfHeal activos) — ningún despliegue manual.',
       'Separación de responsabilidades: el punto de edición de código vive siempre en el equipo del desarrollador, nunca en la máquina de producción.',
       'Gestión de secretos exclusivamente vía Kubernetes Secrets, con tokens de permisos mínimos para cada automatización.',
-      'Decisiones de arquitectura basadas en datos reales de Prometheus/Grafana, no en reglas seguidas sin verificar — incluyendo una desviación consciente y documentada de la práctica recomendada, al desplegar una carga con estado en el nodo de control por falta de memoria en el otro nodo.'
+      'Decisiones de arquitectura basadas en datos reales de Prometheus/Grafana, no en reglas seguidas sin verificar.'
     ],
     repo: 'https://github.com/sergioseoane/oracle-devops-portfolio'
   },
@@ -92,6 +92,19 @@ function closeModal() {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeModal();
 });
+
+function toggleCV() {
+  var panel = document.getElementById('cv-panel');
+  var arrow = document.getElementById('cv-arrow');
+  var isHidden = panel.hasAttribute('hidden');
+  if (isHidden) {
+    panel.removeAttribute('hidden');
+    arrow.textContent = '▴';
+  } else {
+    panel.setAttribute('hidden', '');
+    arrow.textContent = '▾';
+  }
+}
 
 function tick() {
   var el = document.getElementById('clock');
