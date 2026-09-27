@@ -1,4 +1,18 @@
 var projects = {
+  'oracle-devops-portfolio': {
+    name: 'oracle-devops-portfolio',
+    tags: ['Kubernetes', 'Terraform', 'GitOps', 'Ansible'],
+    desc: 'Clúster Kubernetes (k3s) de dos nodos en Oracle Cloud Free Tier, con un flujo GitOps completo y autoalojado: Gitea + Gitea Actions para CI/CD y registro de contenedores, ArgoCD para sincronización automática del clúster, y observabilidad con Prometheus/Grafana.',
+    learnings: [
+      'Infraestructura como código con Terraform sobre OCI, con backend remoto en Object Storage.',
+      'Configuración idempotente con Ansible: dependencias, firewall restringido a una red privada de Tailscale, y memoria de intercambio añadida tras un análisis real de presión de memoria.',
+      'GitOps real: Gitea Actions construye y publica imágenes, ArgoCD sincroniza el clúster automáticamente (prune y selfHeal activos) — ningún despliegue manual.',
+      'Separación de responsabilidades: el punto de edición de código vive siempre en el equipo del desarrollador, nunca en la máquina de producción.',
+      'Gestión de secretos exclusivamente vía Kubernetes Secrets, con tokens de permisos mínimos para cada automatización.',
+      'Decisiones de arquitectura basadas en datos reales de Prometheus/Grafana, no en reglas seguidas sin verificar — incluyendo una desviación consciente y documentada de la práctica recomendada, al desplegar una carga con estado en el nodo de control por falta de memoria en el otro nodo.'
+    ],
+    repo: 'https://github.com/sergioseoane/oracle-devops-portfolio'
+  },
   'postgres-retail-admin': {
     name: 'postgres-retail-admin',
     tags: ['PostgreSQL', 'Bash', 'SQL'],
